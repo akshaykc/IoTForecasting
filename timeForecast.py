@@ -7,23 +7,22 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 
-def movingAvg(train, m = 1):
+def movingAvgRMSE(train, m):
     temp = train[:m]
-    predictTrain = temp[:]
-    i = 0
-    while i!= (len(train)-m):
-        temp.append(sum(predictTrain[-m:])/m)
+    #predictTrain = temp[:]
+    i = m
+    while i!= (len(train)):
+        temp.append(sum(train[i-m:i])/m)
         i+=1
-        predictTrain = temp[:]
-    RMSE = sqrt(mean_squared_error(train,predictTrain))
-    return RMSE
+        #predictTrain = temp[:]
+    return sqrt(mean_squared_error(train[m:],temp[m:]))
 
 def bestMmovAvg(data):
     mRMSE = [10000]
-    mMax = 20
+    mMax = 30
     for i in range(1,mMax):
         trainData = data[:1485]
-        mRMSE.append(movingAvg(trainData,i))
+        mRMSE.append(movingAvgRMSE(trainData,i))
     fig = plt.figure()
     plt.plot(range(1,mMax),mRMSE[1:])
     fig.suptitle('RMSE values - Simple average')
@@ -76,28 +75,29 @@ def main():
     '''Moving average'''
     if MOV_AVG:
         bestM = int(bestMmovAvg(data))
+        #print bestM
         testData = data[1485:]
         temp = testData[:bestM]
-        predictTest = temp[:]
-        i = 0
-        while i!= (len(testData)-bestM):
-            temp.append(sum(predictTest[-bestM:])/bestM)
+        #predictTest = temp[:]
+        i = bestM
+        while i!= (len(testData)):
+            temp.append(sum(testData[i-bestM:i])/bestM)
             i+=1
-            predictTest = temp[:]
-        print predictTest
-        print sqrt(mean_squared_error(testData, predictTest))
+            #predictTest = temp[:]
+        #print predictTest
+        print sqrt(mean_squared_error(testData[bestM:], temp[bestM:]))
         fig = plt.figure()
         plt.plot(range(0,495),testData,'b',label = 'Actual test data')
-        plt.plot(range(0,495),predictTest,'r',label = 'Predicted values')
+        plt.plot(range(0,495),temp,'r',label = 'Predicted values')
         fig.suptitle('Simple average model - Predicted values for best M value vs Actual data')
         plt.xlabel('Time')
         plt.ylabel('Values')
         plt.legend()
         plt.show()
+        
     if EXP_SMOOTH:
-    
         bestAvalue = getBestExpSmooth(data)
-        print bestAvalue
+        #print bestAvalue
         testData = data[1485:]
         temp = [testData[0]]
         predExpSmoothTestData = [testData[0]]
