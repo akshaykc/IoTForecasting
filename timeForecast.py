@@ -24,6 +24,7 @@ def bestMmovAvg(data):
         trainData = data[:1485]
         mRMSE.append(movingAvgRMSE(trainData,i))
     fig = plt.figure()
+    print mRMSE[1:]
     plt.plot(range(1,mMax),mRMSE[1:])
     fig.suptitle('RMSE values - Simple average')
     plt.xlabel('m values')
@@ -85,7 +86,7 @@ def main():
             i+=1
             #predictTest = temp[:]
         #print predictTest
-        print sqrt(mean_squared_error(testData[bestM:], temp[bestM:]))
+        print 'Simple average RMSE testing data - ',sqrt(mean_squared_error(testData[bestM:], temp[bestM:]))
         fig = plt.figure()
         plt.plot(range(0,495),testData,'b',label = 'Actual test data')
         plt.plot(range(0,495),temp,'r',label = 'Predicted values')
@@ -105,7 +106,7 @@ def main():
             predExpSmoothTestData.append(bestAvalue*testData[i-1] + (1-bestAvalue)*temp[i-1])
             temp = predExpSmoothTestData[:]
         
-        print sqrt(mean_squared_error(testData, predExpSmoothTestData))
+        print 'Exponential smoothing test data RMSE - ',sqrt(mean_squared_error(testData, predExpSmoothTestData))
         fig = plt.figure()
         plt.plot(range(0,495),testData,'b',label = 'Actual test data')
         plt.plot(range(0,495),predExpSmoothTestData,'r',label = 'Predicted values')
@@ -114,7 +115,6 @@ def main():
         plt.ylabel('Values')
         plt.legend()
         plt.show()
-    
     
 
 if __name__ == '__main__':
